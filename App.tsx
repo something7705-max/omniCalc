@@ -1,15 +1,32 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { auth } from './firebaseConfig';
 import { CalculatorType, CurrencyCode, CURRENCIES } from './types';
 import NormalCalculator from './components/NormalCalculator';
 import ScientificCalculator from './components/ScientificCalculator';
 import SIPCalculator from './components/SIPCalculator';
 import GSTCalculator from './components/GSTCalculator';
 import InterestCalculator from './components/InterestCalculator';
+import Auth from './components/Auth';
 
 const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<CalculatorType>(CalculatorType.SIP);
   const [currency, setCurrency] = useState<CurrencyCode>('INR');
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = () => {
+    signOut(auth);
+  };
 
   const renderCalculator = () => {
     const commonProps = { currency: CURRENCIES[currency] };
@@ -31,6 +48,18 @@ const App: React.FC = () => {
     { id: CalculatorType.INTEREST, icon: 'fa-percent', label: 'Interest' },
   ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Auth />;
+  }
+
   return (
     <div className="min-h-screen bg-[#FDF8F5] relative">
       {/* Premium Curved Header */}
@@ -39,8 +68,12 @@ const App: React.FC = () => {
       <header className="relative z-10 max-w-4xl mx-auto px-6 pt-8 pb-4">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-4">
-             <button className="text-white/80 hover:text-white transition-opacity">
-                <i className="fas fa-bars text-xl"></i>
+             <button 
+               onClick={handleLogout}
+               className="text-white/80 hover:text-white transition-opacity flex items-center space-x-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10"
+             >
+                <i className="fas fa-sign-out-alt text-xs"></i>
+                <span className="text-[10px] font-black uppercase tracking-widest">Logout</span>
              </button>
              {/* Currency Selector */}
              <div className="relative">
@@ -59,11 +92,14 @@ const App: React.FC = () => {
              </div>
           </div>
           
-          <h1 className="text-white font-bold text-lg tracking-tight uppercase opacity-90 hidden sm:block">
-            {activeTab} Pro
-          </h1>
-
-          <div className="w-10 sm:w-0"></div>
+          <div className="flex flex-col items-end">
+            <h1 className="text-white font-bold text-lg tracking-tight uppercase opacity-90 hidden sm:block">
+              {activeTab} Pro
+            </h1>
+            <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em]">
+              Welcome, {user.displayName || 'Member'}
+            </span>
+          </div>
         </div>
 
         {/* Tab Switcher */}
