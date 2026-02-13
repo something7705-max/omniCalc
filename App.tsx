@@ -32,9 +32,9 @@ const App: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FDF8F5] relative">
+    <div className="min-h-screen bg-surface relative">
       {/* Premium Curved Header */}
-      <div className="curve-bg absolute top-0 left-0 right-0 h-64 z-0"></div>
+      <div className="curve-bg"></div>
 
       <header className="relative z-10 max-w-4xl mx-auto px-6 pt-8 pb-4">
         <div className="flex items-center justify-between mb-8">
@@ -43,7 +43,7 @@ const App: React.FC = () => {
                 <i className="fas fa-bars text-xl"></i>
              </button>
              {/* Currency Selector */}
-             <div className="relative group">
+             <div className="relative">
                <select 
                  value={currency}
                  onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
@@ -63,7 +63,7 @@ const App: React.FC = () => {
             {activeTab} Pro
           </h1>
 
-          <div className="w-10 sm:w-0"></div> {/* Spacer to maintain centering alignment */}
+          <div className="w-10 sm:w-0"></div>
         </div>
 
         {/* Tab Switcher */}
@@ -74,7 +74,7 @@ const App: React.FC = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-xl whitespace-nowrap transition-all duration-300 ${
                 activeTab === tab.id
-                  ? 'bg-white text-slate-900 shadow-xl'
+                  ? 'bg-white text-dark shadow-xl'
                   : 'text-white/60 hover:text-white hover:bg-white/5'
               }`}
             >
@@ -92,7 +92,6 @@ const App: React.FC = () => {
         </div>
       </main>
 
-      {/* Subtle Footer branding */}
       <footer className="fixed bottom-6 left-0 right-0 text-center pointer-events-none opacity-20 z-0">
         <span className="text-xs font-black uppercase tracking-[0.3em]">OmniCalc Premium</span>
       </footer>

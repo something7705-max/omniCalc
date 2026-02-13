@@ -13,88 +13,77 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2344/2344132.png">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Stylesheets & Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#FF8E7E',
+              dark: '#1A1C1E',
+              surface: '#FDF8F5',
+            }
+          }
+        }
+      }
+    </script>
+
+    <style type="text/css">
       @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
       
-      :root {
-        --primary: #FF8E7E;
-        --dark: #1A1C1E;
-        --bg: #FDF8F5;
-      }
-
       body {
         font-family: 'Inter', sans-serif;
-        background-color: var(--bg);
-        color: var(--dark);
+        background-color: #FDF8F5; /* Fallback before Tailwind loads */
+        color: #1A1C1E;
         overflow-x: hidden;
         overscroll-behavior-y: none;
       }
 
-      input[type=range] {
-        -webkit-appearance: none;
-        width: 100%;
-        background: transparent;
-      }
-
-      input[type=range]:focus {
-        outline: none;
-      }
-
-      input[type=range]::-webkit-slider-runnable-track {
-        width: 100%;
-        height: 6px;
-        cursor: pointer;
-        background: #EAE3DF;
-        border-radius: 3px;
-      }
-
-      input[type=range]::-webkit-slider-thumb {
-        height: 20px;
-        width: 20px;
-        border-radius: 50%;
-        background: var(--primary);
-        cursor: pointer;
-        -webkit-appearance: none;
-        margin-top: -7px;
-        box-shadow: 0 4px 10px rgba(255, 142, 126, 0.4);
-        transition: transform 0.2s ease;
-      }
-
-      input[type=range]:active::-webkit-slider-thumb {
-        transform: scale(1.2);
-      }
-
+      /* Core UI Classes */
       .premium-card {
         background: white;
         border-radius: 2.5rem;
         box-shadow: 0 20px 40px rgba(0,0,0,0.03);
       }
 
+      .curve-bg {
+        background: #1A1C1E;
+        border-bottom-left-radius: 3.5rem;
+        border-bottom-right-radius: 3.5rem;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 16rem;
+        z-index: 0;
+      }
+
       .btn-calc {
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
       }
       .btn-calc:active {
         transform: scale(0.92);
       }
 
-      .curve-bg {
-        background: var(--dark);
-        border-bottom-left-radius: 3.5rem;
-        border-bottom-right-radius: 3.5rem;
-      }
+      /* Hide scrollbar */
+      ::-webkit-scrollbar { display: none; }
 
-      ::-webkit-scrollbar {
-        display: none;
-      }
-      
-      @media (max-width: 640px) {
-        .btn-calc {
-          -webkit-tap-highlight-color: transparent;
-        }
+      /* Range Inputs */
+      input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+      input[type=range]:focus { outline: none; }
+      input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #EAE3DF; border-radius: 3px; }
+      input[type=range]::-webkit-slider-thumb {
+        height: 20px; width: 20px; border-radius: 50%; background: #FF8E7E;
+        cursor: pointer; -webkit-appearance: none; margin-top: -7px;
+        box-shadow: 0 4px 10px rgba(255, 142, 126, 0.4);
       }
     </style>
+
+    <!-- React and Babel -->
     <script type="importmap">
     {
       "imports": {
@@ -105,10 +94,12 @@
       }
     }
     </script>
-    <!-- Entry point script -->
-    <script type="module" src="./index.tsx"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body class="antialiased">
     <div id="root"></div>
+    
+    <!-- We load index.tsx using Babel so it works on static hosts -->
+    <script type="text/babel" data-type="module" src="./index.tsx"></script>
 </body>
 </html>
