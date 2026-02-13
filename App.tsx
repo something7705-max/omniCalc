@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
-import { CalculatorType, CurrencyCode, CURRENCIES } from './types.ts';
-import NormalCalculator from './components/NormalCalculator.tsx';
-import ScientificCalculator from './components/ScientificCalculator.tsx';
-import SIPCalculator from './components/SIPCalculator.tsx';
-import GSTCalculator from './components/GSTCalculator.tsx';
-import InterestCalculator from './components/InterestCalculator.tsx';
+import { CalculatorType, CurrencyCode, CURRENCIES } from './types';
+import NormalCalculator from './components/NormalCalculator';
+import ScientificCalculator from './components/ScientificCalculator';
+import SIPCalculator from './components/SIPCalculator';
+import GSTCalculator from './components/GSTCalculator';
+import InterestCalculator from './components/InterestCalculator';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<CalculatorType>(CalculatorType.SIP);
@@ -32,7 +32,7 @@ const App: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-surface relative">
+    <div className="min-h-screen bg-[#FDF8F5] relative">
       {/* Premium Curved Header */}
       <div className="curve-bg"></div>
 
@@ -74,7 +74,7 @@ const App: React.FC = () => {
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 rounded-xl whitespace-nowrap transition-all duration-300 ${
                 activeTab === tab.id
-                  ? 'bg-white text-dark shadow-xl'
+                  ? 'bg-white text-slate-900 shadow-xl'
                   : 'text-white/60 hover:text-white hover:bg-white/5'
               }`}
             >
