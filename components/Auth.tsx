@@ -5,7 +5,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile 
 } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth } from '../firebaseConfig.ts';
 
 const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);

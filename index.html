@@ -4,14 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="google-site-verification" content="ju8zJXZTXW8JkCQ-OyK6XmBcbBjAcCSAN05gqT8-R_s" />
-    <title>OmniCalc Pro | Premium Finance Suite</title>
+    <title>OmniCalc Pro | Premium Financial Suite</title>
     
-    <meta name="theme-color" content="#1A1C1E">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2344/2344132.png">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -21,8 +15,8 @@
           extend: {
             colors: {
               primary: '#FF8E7E',
-              dark: '#1A1C1E',
-              surface: '#FDF8F5',
+              dark: '#0F172A',
+              card: '#1E293B',
             }
           }
         }
@@ -30,49 +24,74 @@
     </script>
 
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+      @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
       
       body {
-        font-family: 'Inter', sans-serif;
-        background-color: #FDF8F5;
-        overscroll-behavior-y: none;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #0F172A;
+        color: #F8FAFC;
         margin: 0;
+        -webkit-tap-highlight-color: transparent;
       }
 
-      ::-webkit-scrollbar { display: none; }
-
-      .premium-card {
-        background: white;
-        border-radius: 2.5rem;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.03);
-        border: 1px solid rgba(255,255,255,0.5);
+      .glass {
+        background: rgba(30, 41, 59, 0.7);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
-      .curve-bg {
-        background: #1A1C1E;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 16rem;
-        z-index: 0;
-        border-bottom-left-radius: 3.5rem;
-        border-bottom-right-radius: 3.5rem;
+      .tab-active {
+        background: #FF8E7E;
+        color: #0F172A;
+        box-shadow: 0 10px 20px -5px rgba(255, 142, 126, 0.4);
       }
 
-      input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-      input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #EAE3DF; border-radius: 3px; }
+      input[type=range] {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+      }
+      input[type=range]::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 4px;
+        background: #334155;
+        border-radius: 2px;
+      }
       input[type=range]::-webkit-slider-thumb {
-        height: 20px; width: 20px; border-radius: 50%; background: #FF8E7E;
-        cursor: pointer; -webkit-appearance: none; margin-top: -7px;
-        box-shadow: 0 4px 10px rgba(255, 142, 126, 0.4);
+        -webkit-appearance: none;
+        height: 18px;
+        width: 18px;
+        border-radius: 50%;
+        background: #FF8E7E;
+        cursor: pointer;
+        margin-top: -7px;
+        box-shadow: 0 0 10px rgba(255, 142, 126, 0.3);
+      }
+
+      .calc-container {
+        display: none;
+      }
+      .calc-container.active {
+        display: block;
+        animation: slideUp 0.4s ease-out;
+      }
+
+      @keyframes slideUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Hide arrows in number input */
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
       }
     </style>
 <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@^19.2.4",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/",
     "recharts": "https://esm.sh/recharts@^3.7.0",
     "vite": "https://esm.sh/vite@^7.3.1",
@@ -82,8 +101,266 @@
 }
 </script>
 </head>
-<body class="antialiased">
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+<body class="antialiased selection:bg-primary/30">
+    <div id="root" class="min-h-screen pb-20">
+        <!-- Header -->
+        <header class="px-6 pt-10 pb-6 max-w-2xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-extrabold tracking-tight">OmniCalc <span class="text-primary">Pro</span></h1>
+                <p class="text-[10px] uppercase tracking-[0.3em] text-slate-500 font-bold">Financial Intelligence</p>
+            </div>
+            <div class="w-10 h-10 rounded-xl glass flex items-center justify-center">
+                <i class="fas fa-bolt text-primary"></i>
+            </div>
+        </header>
+
+        <!-- Tab Bar -->
+        <nav class="px-6 mb-8 max-w-2xl mx-auto">
+            <div class="glass p-1.5 rounded-2xl flex overflow-x-auto no-scrollbar space-x-1">
+                <button onclick="switchTab('basic')" id="btn-basic" class="tab-btn flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap text-slate-400">Basic</button>
+                <button onclick="switchTab('sci')" id="btn-sci" class="tab-btn flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap text-slate-400">Sci</button>
+                <button onclick="switchTab('sip')" id="btn-sip" class="tab-btn flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap tab-active">SIP</button>
+                <button onclick="switchTab('gst')" id="btn-gst" class="tab-btn flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap text-slate-400">GST</button>
+                <button onclick="switchTab('interest')" id="btn-interest" class="tab-btn flex-1 py-3 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap text-slate-400">Interest</button>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="px-6 max-w-2xl mx-auto">
+            
+            <!-- BASIC CALCULATOR -->
+            <section id="basic-calc" class="calc-container">
+                <div class="glass rounded-[2.5rem] p-8 mb-6">
+                    <div class="text-right min-h-[100px] flex flex-col justify-end">
+                        <p id="basic-formula" class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-2 h-4 truncate"></p>
+                        <h2 id="basic-display" class="text-5xl font-black truncate tracking-tighter">0</h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-4 gap-3">
+                    <button onclick="handleBasicClear()" class="h-16 glass rounded-2xl text-[10px] font-black uppercase tracking-widest text-primary hover:bg-slate-800 transition-all active:scale-95">AC</button>
+                    <button onclick="handleBasicBackspace()" class="h-16 glass rounded-2xl text-slate-400 hover:bg-slate-800 transition-all active:scale-95"><i class="fas fa-backspace"></i></button>
+                    <button onclick="handleBasicPercentage()" class="h-16 glass rounded-2xl text-slate-400 hover:bg-slate-800 transition-all active:scale-95"><i class="fas fa-percent"></i></button>
+                    <button onclick="handleBasicOperator('/')" class="h-16 glass rounded-2xl text-xl font-bold text-primary hover:bg-slate-800 transition-all active:scale-95">÷</button>
+
+                    <button onclick="handleBasicNumber('7')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">7</button>
+                    <button onclick="handleBasicNumber('8')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">8</button>
+                    <button onclick="handleBasicNumber('9')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">9</button>
+                    <button onclick="handleBasicOperator('*')" class="h-16 glass rounded-2xl text-xl font-bold text-primary hover:bg-slate-800 transition-all active:scale-95">×</button>
+
+                    <button onclick="handleBasicNumber('4')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">4</button>
+                    <button onclick="handleBasicNumber('5')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">5</button>
+                    <button onclick="handleBasicNumber('6')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">6</button>
+                    <button onclick="handleBasicOperator('-')" class="h-16 glass rounded-2xl text-xl font-bold text-primary hover:bg-slate-800 transition-all active:scale-95">−</button>
+
+                    <button onclick="handleBasicNumber('1')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">1</button>
+                    <button onclick="handleBasicNumber('2')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">2</button>
+                    <button onclick="handleBasicNumber('3')" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">3</button>
+                    <button onclick="handleBasicOperator('+')" class="h-16 glass rounded-2xl text-xl font-bold text-primary hover:bg-slate-800 transition-all active:scale-95">+</button>
+
+                    <button onclick="handleBasicNumber('0')" class="h-16 glass rounded-2xl text-xl font-bold col-span-2 hover:bg-slate-800 transition-all active:scale-95">0</button>
+                    <button onclick="handleBasicDot()" class="h-16 glass rounded-2xl text-xl font-bold hover:bg-slate-800 transition-all active:scale-95">.</button>
+                    <button onclick="handleBasicEqual()" class="h-16 bg-primary rounded-2xl text-xl font-bold text-dark hover:opacity-90 transition-all active:scale-95">=</button>
+                </div>
+            </section>
+
+            <!-- SCIENTIFIC CALCULATOR -->
+            <section id="sci-calc" class="calc-container">
+                <div class="glass rounded-[2.5rem] p-8 mb-6">
+                    <div class="text-right min-h-[100px] flex flex-col justify-end">
+                        <div class="flex justify-between items-center mb-2">
+                            <span id="sci-mode-indicator" class="text-[9px] font-black uppercase tracking-widest text-primary/60">DEG MODE</span>
+                            <p id="sci-formula" class="text-slate-500 text-xs font-bold uppercase tracking-widest h-4 truncate"></p>
+                        </div>
+                        <h2 id="sci-display" class="text-5xl font-black truncate tracking-tighter">0</h2>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-5 gap-2">
+                    <!-- Scientific Row 1 -->
+                    <button onclick="toggleSciMode()" class="h-12 glass rounded-xl text-[9px] font-black uppercase tracking-widest text-primary hover:bg-slate-800 transition-all active:scale-95">Deg/Rad</button>
+                    <button onclick="handleSciFunction('sin')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">sin</button>
+                    <button onclick="handleSciFunction('cos')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">cos</button>
+                    <button onclick="handleSciFunction('tan')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">tan</button>
+                    <button onclick="handleSciClear()" class="h-12 glass rounded-xl text-[10px] font-black uppercase text-primary hover:bg-slate-800 transition-all active:scale-95">AC</button>
+
+                    <!-- Scientific Row 2 -->
+                    <button onclick="handleSciFunction('log')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">log</button>
+                    <button onclick="handleSciFunction('ln')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">ln</button>
+                    <button onclick="handleSciFunction('sq')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">x²</button>
+                    <button onclick="handleSciOperator('pow')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">xʸ</button>
+                    <button onclick="handleSciBackspace()" class="h-12 glass rounded-xl text-slate-400 hover:bg-slate-800 transition-all active:scale-95"><i class="fas fa-backspace"></i></button>
+
+                    <!-- Row 3 -->
+                    <button onclick="handleSciFunction('sqrt')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">√</button>
+                    <button onclick="handleSciNumber('7')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">7</button>
+                    <button onclick="handleSciNumber('8')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">8</button>
+                    <button onclick="handleSciNumber('9')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">9</button>
+                    <button onclick="handleSciOperator('/')" class="h-12 glass rounded-xl text-lg font-bold text-primary hover:bg-slate-800 transition-all active:scale-95">÷</button>
+
+                    <!-- Row 4 -->
+                    <button onclick="handleSciConstant('pi')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">π</button>
+                    <button onclick="handleSciNumber('4')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">4</button>
+                    <button onclick="handleSciNumber('5')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">5</button>
+                    <button onclick="handleSciNumber('6')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">6</button>
+                    <button onclick="handleSciOperator('*')" class="h-12 glass rounded-xl text-lg font-bold text-primary hover:bg-slate-800 transition-all active:scale-95">×</button>
+
+                    <!-- Row 5 -->
+                    <button onclick="handleSciConstant('e')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">e</button>
+                    <button onclick="handleSciNumber('1')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">1</button>
+                    <button onclick="handleSciNumber('2')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">2</button>
+                    <button onclick="handleSciNumber('3')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">3</button>
+                    <button onclick="handleSciOperator('-')" class="h-12 glass rounded-xl text-lg font-bold text-primary hover:bg-slate-800 transition-all active:scale-95">−</button>
+
+                    <!-- Row 6 -->
+                    <button onclick="handleSciFunction('fact')" class="h-12 glass rounded-xl text-[10px] font-black text-slate-400 hover:bg-slate-800 transition-all active:scale-95">n!</button>
+                    <button onclick="handleSciNumber('0')" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">0</button>
+                    <button onclick="handleSciDot()" class="h-12 glass rounded-xl text-lg font-bold hover:bg-slate-800 transition-all active:scale-95">.</button>
+                    <button onclick="handleSciEqual()" class="h-12 bg-primary rounded-xl text-lg font-bold text-dark hover:opacity-90 transition-all active:scale-95">=</button>
+                    <button onclick="handleSciOperator('+')" class="h-12 glass rounded-xl text-lg font-bold text-primary hover:bg-slate-800 transition-all active:scale-95">+</button>
+                </div>
+            </section>
+
+            <!-- SIP CALCULATOR -->
+            <section id="sip-calc" class="calc-container active">
+                <div class="glass rounded-[2.5rem] p-8 mb-6">
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1 text-center">Projected Maturity Value</p>
+                    <h2 id="sip-total-value" class="text-4xl font-black text-center mb-8">₹0</h2>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                            <p class="text-[8px] uppercase tracking-widest text-slate-500 font-bold mb-1">Total Invested</p>
+                            <p id="sip-invested" class="text-sm font-bold">₹0</p>
+                        </div>
+                        <div class="bg-primary/10 p-4 rounded-2xl border border-primary/10">
+                            <p class="text-[8px] uppercase tracking-widest text-primary/70 font-bold mb-1">Estimated Returns</p>
+                            <p id="sip-returns" class="text-sm font-bold text-primary">₹0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="glass p-6 rounded-3xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="text-[10px] uppercase font-black tracking-widest text-slate-400">Monthly SIP Amount</label>
+                            <span class="text-sm font-bold text-primary">₹<span id="label-sip-amount">5,000</span></span>
+                        </div>
+                        <input type="range" id="input-sip-amount" min="500" max="100000" step="500" value="5000" oninput="calculateSIP()">
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="text-[10px] uppercase font-black tracking-widest text-slate-400">Expected Rate (p.a %)</label>
+                            <span class="text-sm font-bold text-primary"><span id="label-sip-rate">12</span>%</span>
+                        </div>
+                        <input type="range" id="input-sip-rate" min="1" max="30" step="0.5" value="12" oninput="calculateSIP()">
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="text-[10px] uppercase font-black tracking-widest text-slate-400">Time Period (Years)</label>
+                            <span class="text-sm font-bold text-primary"><span id="label-sip-years">10</span> Yrs</span>
+                        </div>
+                        <input type="range" id="input-sip-years" min="1" max="40" step="1" value="10" oninput="calculateSIP()">
+                    </div>
+                </div>
+            </section>
+
+            <!-- GST CALCULATOR -->
+            <section id="gst-calc" class="calc-container">
+                <div class="glass rounded-[2.5rem] p-8 mb-6 text-center">
+                    <div class="flex justify-center space-x-2 mb-8 p-1 bg-slate-800/50 rounded-xl w-fit mx-auto">
+                        <button onclick="setGSTMode('exclusive')" id="gst-excl" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest bg-primary text-dark transition-all">Exclusive</button>
+                        <button onclick="setGSTMode('inclusive')" id="gst-incl" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400 transition-all">Inclusive</button>
+                    </div>
+
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Total Amount</p>
+                    <h2 id="gst-total-amount" class="text-4xl font-black mb-8">₹0</h2>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                            <p class="text-[8px] uppercase tracking-widest text-slate-500 font-bold mb-1">Base Amount</p>
+                            <p id="gst-base" class="text-sm font-bold">₹0</p>
+                        </div>
+                        <div class="bg-primary/10 p-4 rounded-2xl border border-primary/10">
+                            <p class="text-[8px] uppercase tracking-widest text-primary/70 font-bold mb-1">GST Tax</p>
+                            <p id="gst-tax" class="text-sm font-bold text-primary">₹0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="glass p-6 rounded-3xl">
+                        <label class="text-[10px] uppercase font-black tracking-widest text-slate-400 block mb-4">Initial Amount (₹)</label>
+                        <input type="number" id="input-gst-amount" value="10000" class="w-full bg-slate-800/50 border border-white/5 rounded-2xl py-4 px-6 text-xl font-black outline-none focus:border-primary/50 transition-all" oninput="calculateGST()">
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-2">
+                        <button onclick="setGSTRate(5)" class="gst-rate-btn py-4 glass rounded-2xl text-xs font-black hover:bg-slate-800 transition-all">5%</button>
+                        <button onclick="setGSTRate(12)" class="gst-rate-btn py-4 glass rounded-2xl text-xs font-black hover:bg-slate-800 transition-all">12%</button>
+                        <button onclick="setGSTRate(18)" class="gst-rate-btn py-4 glass rounded-2xl text-xs font-black bg-primary text-dark border-none">18%</button>
+                        <button onclick="setGSTRate(28)" class="gst-rate-btn py-4 glass rounded-2xl text-xs font-black hover:bg-slate-800 transition-all">28%</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INTEREST CALCULATOR -->
+            <section id="interest-calc" class="calc-container">
+                <div class="glass rounded-[2.5rem] p-8 mb-6 text-center">
+                    <div class="flex justify-center space-x-2 mb-8 p-1 bg-slate-800/50 rounded-xl w-fit mx-auto">
+                        <button onclick="setInterestType('simple')" id="int-simple" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-400 transition-all">Simple</button>
+                        <button onclick="setInterestType('compound')" id="int-compound" class="px-4 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest bg-primary text-dark transition-all">Compound</button>
+                    </div>
+
+                    <p class="text-[10px] uppercase tracking-widest text-slate-500 font-bold mb-1">Total Maturity Value</p>
+                    <h2 id="int-total-value" class="text-4xl font-black mb-8">₹0</h2>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-800/50 p-4 rounded-2xl border border-white/5">
+                            <p class="text-[8px] uppercase tracking-widest text-slate-500 font-bold mb-1">Principal</p>
+                            <p id="int-principal-display" class="text-sm font-bold">₹0</p>
+                        </div>
+                        <div class="bg-primary/10 p-4 rounded-2xl border border-primary/10">
+                            <p class="text-[8px] uppercase tracking-widest text-primary/70 font-bold mb-1">Interest Earned</p>
+                            <p id="int-earned" class="text-sm font-bold text-primary">₹0</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="glass p-6 rounded-3xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="text-[10px] uppercase font-black tracking-widest text-slate-400">Principal Amount</label>
+                            <span class="text-sm font-bold text-primary">₹<span id="label-int-amount">50,000</span></span>
+                        </div>
+                        <input type="range" id="input-int-amount" min="1000" max="1000000" step="1000" value="50000" oninput="calculateInterest()">
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="text-[10px] uppercase font-black tracking-widest text-slate-400">Interest Rate (% p.a)</label>
+                            <span class="text-sm font-bold text-primary"><span id="label-int-rate">8.5</span>%</span>
+                        </div>
+                        <input type="range" id="input-int-rate" min="1" max="25" step="0.1" value="8.5" oninput="calculateInterest()">
+                    </div>
+
+                    <div class="glass p-6 rounded-3xl">
+                        <div class="flex justify-between items-center mb-4">
+                            <label class="text-[10px] uppercase font-black tracking-widest text-slate-400">Time Period (Years)</label>
+                            <span class="text-sm font-bold text-primary"><span id="label-int-years">5</span> Yrs</span>
+                        </div>
+                        <input type="range" id="input-int-years" min="1" max="40" step="1" value="5" oninput="calculateInterest()">
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="fixed bottom-0 left-0 right-0 p-6 pointer-events-none text-center opacity-30">
+            <span class="text-[8px] font-black uppercase tracking-[0.4em]">OmniCalc Professional Suite</span>
+        </footer>
+    </div>
+
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>

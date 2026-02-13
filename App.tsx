@@ -1,32 +1,15 @@
 
-import React, { useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
-import { auth } from './firebaseConfig';
-import { CalculatorType, CurrencyCode, CURRENCIES } from './types';
-import NormalCalculator from './components/NormalCalculator';
-import ScientificCalculator from './components/ScientificCalculator';
-import SIPCalculator from './components/SIPCalculator';
-import GSTCalculator from './components/GSTCalculator';
-import InterestCalculator from './components/InterestCalculator';
-import Auth from './components/Auth';
+import React, { useState } from 'react';
+import { CalculatorType, CurrencyCode, CURRENCIES } from './types.ts';
+import NormalCalculator from './components/NormalCalculator.tsx';
+import ScientificCalculator from './components/ScientificCalculator.tsx';
+import SIPCalculator from './components/SIPCalculator.tsx';
+import GSTCalculator from './components/GSTCalculator.tsx';
+import InterestCalculator from './components/InterestCalculator.tsx';
 
 const App: React.FC = () => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<CalculatorType>(CalculatorType.SIP);
   const [currency, setCurrency] = useState<CurrencyCode>('INR');
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  const handleLogout = () => {
-    signOut(auth);
-  };
 
   const renderCalculator = () => {
     const commonProps = { currency: CURRENCIES[currency] };
@@ -48,57 +31,41 @@ const App: React.FC = () => {
     { id: CalculatorType.INTEREST, icon: 'fa-percent', label: 'Interest' },
   ];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-surface flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Auth />;
-  }
-
   return (
     <div className="min-h-screen bg-[#FDF8F5] relative">
       {/* Premium Curved Header */}
       <div className="curve-bg"></div>
 
-      <header className="relative z-10 max-w-4xl mx-auto px-6 pt-8 pb-4">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-             <button 
-               onClick={handleLogout}
-               className="text-white/80 hover:text-white transition-opacity flex items-center space-x-2 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10"
-             >
-                <i className="fas fa-sign-out-alt text-xs"></i>
-                <span className="text-[10px] font-black uppercase tracking-widest">Logout</span>
-             </button>
+      <header className="relative z-10 max-w-4xl mx-auto px-6 pt-10 pb-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between mb-8 space-y-4 sm:space-y-0">
+          <div className="flex items-center space-x-3">
+             <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center border border-white/10">
+                <i className="fas fa-calculator text-primary"></i>
+             </div>
              {/* Currency Selector */}
              <div className="relative">
                <select 
                  value={currency}
                  onChange={(e) => setCurrency(e.target.value as CurrencyCode)}
-                 className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg border border-white/10 outline-none cursor-pointer appearance-none pr-8 transition-all"
+                 className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest px-3 py-2.5 rounded-xl border border-white/10 outline-none cursor-pointer appearance-none pr-8 transition-all"
                >
                  {Object.values(CURRENCIES).map(curr => (
                    <option key={curr.code} value={curr.code} className="text-slate-900">{curr.code} ({curr.symbol})</option>
                  ))}
                </select>
-               <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-white/50 text-[8px]">
+               <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-white/50 text-[8px]">
                   <i className="fas fa-chevron-down"></i>
                </div>
              </div>
           </div>
           
-          <div className="flex flex-col items-end">
-            <h1 className="text-white font-bold text-lg tracking-tight uppercase opacity-90 hidden sm:block">
-              {activeTab} Pro
+          <div className="text-center sm:text-right">
+            <h1 className="text-white font-black text-2xl tracking-tight uppercase">
+              OmniCalc <span className="text-primary">Pro</span>
             </h1>
-            <span className="text-[8px] font-black text-primary uppercase tracking-[0.2em]">
-              Welcome, {user.displayName || 'Member'}
-            </span>
+            <p className="text-[9px] font-bold text-white/40 uppercase tracking-[0.3em]">
+              Premium Calculator Suite
+            </p>
           </div>
         </div>
 
@@ -129,7 +96,7 @@ const App: React.FC = () => {
       </main>
 
       <footer className="fixed bottom-6 left-0 right-0 text-center pointer-events-none opacity-20 z-0">
-        <span className="text-xs font-black uppercase tracking-[0.3em]">OmniCalc Premium</span>
+        <span className="text-xs font-black uppercase tracking-[0.3em]">OmniCalc Professional</span>
       </footer>
     </div>
   );
